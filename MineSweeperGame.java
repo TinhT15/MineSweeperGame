@@ -10,9 +10,9 @@
  *The user is presented with a game grid at the beginning showing no cells selected (0)
  *The grid will show an X (1) if there is no mine, or an M (2) if there is a mine.
  *The user is prompted to select a cell using [row][column] coordinates.
- *If the user hits a cell that contains a mine (2), he/she dies and the game ends.
+ *If the user hits a cell that contains a mine 3 times(2), he/she dies and the game ends.
  *If the user hits a cell that does not contain a mine, he/she is prompted to continue 
- *with the game until he/she hits a mine and dies or completes the entire grid without hitting a mine, 
+ *with the game until he/she hits a mine 3 times and dies or completes the entire grid without hitting a mine, 
  *in which case he/she wins and the game ends.
  * @author (Tinh Tran)
  * @version (a version number or a date)
@@ -20,10 +20,22 @@
 import java.util.Scanner;
 public class MineSweeperGame
 {
+    static void printStarline(int arraySize) {
+        for (int i = 0; i < arraySize + 2; i++) {
+                System.out.print("*");
+            }
+            System.out.println("");
+    }
+    
     static void printGameBoard(int[][] intArray, int arraySize) {
-        System.out.println("Here is the minesweeper grid map.");        
+        System.out.println("Here is the minesweeper grid map.");
+        printStarline(arraySize);
         for (int x = 0; x < arraySize; x++) {
                 for (int y = 0; y < arraySize; y++) { 
+                    if (y == 0)
+                    {
+                        System.out.print("*");
+                    }
                     
                     int myInt = intArray[x][y];
                     
@@ -41,9 +53,15 @@ public class MineSweeperGame
                         //2 and anything else means mine
                         System.out.print("M");
                     }
+                    if (y == arraySize -1)
+                    {
+                        System.out.print("*");
+                    }
                 }
                 System.out.println("");
+                
         }
+        printStarline(arraySize);
     }
     
     static void printData(int[][] intArray, int arraySize) {
@@ -107,6 +125,7 @@ public class MineSweeperGame
   
         Scanner myScanner = new Scanner(System.in);
         boolean gameOver = false;
+        int mineTracker = 0;
         do 
         {        
             printGameBoard(myUserArray, 5);
@@ -124,9 +143,14 @@ public class MineSweeperGame
                 
                 if (myUserArray[row][column] == 2)
                 {
-                    System.out.println("You hit a mine, game over!");
-                    printGameBoard(mySolutionArray, 5);
-                    gameOver = true;
+                    mineTracker = mineTracker + 1;
+                    System.out.println("You hit a mine, mineTracker=" + mineTracker);
+                    if (mineTracker == 3)
+                    {
+                        System.out.println("You have hit 3 mines, game over!");
+                        gameOver = true;
+                        printGameBoard(mySolutionArray, 5);
+                    }
                 }
                 else
                 {
