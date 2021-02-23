@@ -124,6 +124,42 @@ public class MineSweeperGame
           return true;
         }
     
+    static boolean didPlayerHitMine(int[][] userArray, int row, int column, int[][] solutionArray, int[][] testArray)
+    {
+        boolean gameOver = false;
+        if (userArray[row][column] > 0)
+            {
+                System.out.println("You already selected this entry, try a different coordinate.");
+            }
+            else
+            {
+                userArray[row][column] = solutionArray[row][column];  
+                testArray[row][column] = solutionArray[row][column];           
+                
+                // If coordinate is a mine.
+                if (userArray[row][column] == 9)
+                {
+                    System.out.println("You have hit a mine, game over! \uD83D\uDE26");
+                    gameOver = true;
+                    printGameBoard(solutionArray, 5);
+                }
+                else
+                {
+                    int numberOfMines = getNumberOfMines(solutionArray, 5, row, column);
+                    userArray[row][column] = numberOfMines;   
+                    printGameBoard(userArray, 5);
+            
+                    if (isGridFilled(testArray, 5))
+                    {
+                        System.out.println("Congratulations! You just beat the minesweeper game! \uD83D\uDE00");
+                        printGameBoard(solutionArray, 5);
+                        gameOver = true;
+                    }
+                }
+            }
+            return gameOver;
+    }
+        
     public static void main(String[] args){
         System.out.print("\u000C");
         
@@ -158,50 +194,23 @@ public class MineSweeperGame
   
         Scanner myScanner = new Scanner(System.in);
         boolean gameOver = false;
-        int mineTracker = 0;
         printGameBoard(myUserArray, 5);
 
         do 
         {        
-            System.out.println("Enter Row space Column starting at upper left corner as 0,0.");
+            System.out.println("Player 1: Enter Row space Column starting at upper left corner as 0,0.");
             int row = myScanner.nextInt();
             int column = myScanner.nextInt();
-            if (myUserArray[row][column] > 0)
-            {
-                System.out.println("You already selected this entry, try a different coordinate.");
-            }
-            else
-            {
-                myUserArray[row][column] = mySolutionArray[row][column];  
-                myTestArray[row][column] = mySolutionArray[row][column];           
-                
-                if (myUserArray[row][column] == 9)
-                {
-                    mineTracker = mineTracker + 1;
-                    System.out.println("You hit a mine, mineTracker=" + mineTracker);
-                    if (mineTracker == 3)
-                    {
-                        System.out.println("You have hit 3 mines, game over! \uD83D\uDE26");
-                        gameOver = true;
-                        printGameBoard(mySolutionArray, 5);
-                    }
-                     printGameBoard(myUserArray, 5);
-                    
-                }
-                else
-                {
-                    int numberOfMines = getNumberOfMines(mySolutionArray, 5, row, column);
-                    myUserArray[row][column] = numberOfMines;   
-                    printGameBoard(myUserArray, 5);
+            gameOver = didPlayerHitMine(myUserArray, row, column, mySolutionArray, myTestArray);
             
-                    if (isGridFilled(myTestArray, 5))
-                    {
-                        System.out.println("Congratulations! You just beat the minesweeper game! \uD83D\uDE00");
-                        printGameBoard(mySolutionArray, 5);
-                        gameOver = true;
-                    }
-                }
+            if (gameOver == false)
+            {
+                System.out.println("Player 2: Enter Row space Column starting at upper left corner as 0,0.");
+                row = myScanner.nextInt();
+                column = myScanner.nextInt();
+                gameOver = didPlayerHitMine(myUserArray, row, column, mySolutionArray, myTestArray);
             }
+            
         }
         while (gameOver == false);
     }   
