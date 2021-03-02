@@ -126,7 +126,7 @@ public class MineSweeperGame
     
     static boolean didPlayerHitMine(int[][] userArray, int row, int column, int[][] solutionArray, int[][] testArray)
     {
-        boolean gameOver = false;
+        boolean hitAMine = false;
         if (userArray[row][column] > 0)
             {
                 System.out.println("You already selected this entry, try a different coordinate.");
@@ -139,25 +139,15 @@ public class MineSweeperGame
                 // If coordinate is a mine.
                 if (userArray[row][column] == 9)
                 {
-                    System.out.println("You have hit a mine, game over! \uD83D\uDE26");
-                    gameOver = true;
-                    printGameBoard(solutionArray, 5);
+                    System.out.println("You hit a mine.");
+                    hitAMine = true;
                 }
                 else
                 {
-                    int numberOfMines = getNumberOfMines(solutionArray, 5, row, column);
-                    userArray[row][column] = numberOfMines;   
-                    printGameBoard(userArray, 5);
-            
-                    if (isGridFilled(testArray, 5))
-                    {
-                        System.out.println("Congratulations! You just beat the minesweeper game! \uD83D\uDE00");
-                        printGameBoard(solutionArray, 5);
-                        gameOver = true;
-                    }
+                    hitAMine = false;
                 }
             }
-            return gameOver;
+            return hitAMine;
     }
         
     public static void main(String[] args){
@@ -195,22 +185,62 @@ public class MineSweeperGame
         Scanner myScanner = new Scanner(System.in);
         boolean gameOver = false;
         printGameBoard(myUserArray, 5);
-
+        int mineTracker1 = 0;
+        int mineTracker2 = 0;
         do 
         {        
             System.out.println("Player 1: Enter Row space Column starting at upper left corner as 0,0.");
             int row = myScanner.nextInt();
             int column = myScanner.nextInt();
-            gameOver = didPlayerHitMine(myUserArray, row, column, mySolutionArray, myTestArray);
+            boolean hitAMine = didPlayerHitMine(myUserArray, row, column, mySolutionArray, myTestArray);
+            if (hitAMine)
+            {
+                mineTracker1 = mineTracker1 + 1;
+                printGameBoard(myUserArray, 5);
+                if (mineTracker1 == 3)
+                {
+                    System.out.println("Player 1, you hit three mines! You lost!");
+                    gameOver = true;
+                }
+                else if (isGridFilled(myTestArray, 5))
+                {
+                     System.out.println("Congratulations Player 1! You just beat the minesweeper game! \uD83D\uDE00");
+                     printGameBoard(mySolutionArray, 5);
+                     gameOver = true;
+                }
+            }
+            else
+            {
+                printGameBoard(myUserArray, 5);
+            }
             
             if (gameOver == false)
             {
                 System.out.println("Player 2: Enter Row space Column starting at upper left corner as 0,0.");
                 row = myScanner.nextInt();
                 column = myScanner.nextInt();
-                gameOver = didPlayerHitMine(myUserArray, row, column, mySolutionArray, myTestArray);
-            }
-            
+                hitAMine = didPlayerHitMine(myUserArray, row, column, mySolutionArray, myTestArray);
+                if (hitAMine)
+                {
+                    mineTracker2 = mineTracker2 + 1;
+                    printGameBoard(myUserArray, 5);
+                    if (mineTracker2 == 3)
+                    {
+                        System.out.println("Player 2, you hit three mines! You lost!");
+                        gameOver = true;
+                    }
+                    else if (isGridFilled(myTestArray, 5))
+                    {
+                        System.out.println("Congratulations Player 2! You just beat the minesweeper game! \uD83D\uDE00");
+                        printGameBoard(mySolutionArray, 5);
+                        gameOver = true;
+                    }
+                }
+                else
+                {
+                    printGameBoard(myUserArray, 5);
+                }
+            }        
         }
         while (gameOver == false);
     }   
